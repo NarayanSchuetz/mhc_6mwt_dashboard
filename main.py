@@ -40,7 +40,9 @@ html_code = f"""
     <a href="https://www.google.com" download="data.csv">
         <button class="button">Download Dataset</button>
     </a>
-    <button class="button">To the iOS App</button>
+    <a href="https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://apps.apple.com/us/app/myheart-counts/id972189947&ved=2ahUKEwiH-Km9ouKGAxV7KEQIHTIrBz4QFnoECBIQAQ&usg=AOvVaw2KKeG75JTdl-8FA17ZPzOv">
+        <button class="button">To the iOS App</button>
+    </a>
 </div>
 """
 
