@@ -5,7 +5,6 @@ title_styles = """
     font-size: 32px;
     font-weight: 700;
     text-align: center;
-    color: white;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     padding: 20px 0;
 }
