@@ -25,6 +25,10 @@ def get_summary_data():
     return _summary_dao.get_full_df()
 
 
+# Sidebar for unit toggle button
+st.sidebar.markdown("## Unit System")
+use_metric = st.sidebar.checkbox("Metric Units", value=True)
+
 col1, col2, col3 = st.columns([1, 6, 1])
 with col2:
     st.markdown(f"{title_styles}<div class='title'>{TITLE}</div>", unsafe_allow_html=True)
@@ -60,8 +64,24 @@ disease_options = ["None"] + list(cardio_disease_options) + list(vascular_diseas
 sixmwd = st.number_input("Enter your 6-minute walk distance (meters)", min_value=300, value=600, max_value=1500, step=1)
 sex = st.selectbox("Select your sex", ["Undefined", "Male", "Female"])
 age = st.number_input("Enter your age (years)", min_value=18, value=None, step=1, max_value=90)
-height = st.number_input("Enter your height (cm)", min_value=120, value=None, max_value=220, step=1)
-weight = st.number_input("Enter your weight (kg)", min_value=30, value=None, max_value=200, step=1)
+
+height, weight = None, None
+
+if use_metric:
+    height = st.number_input("Enter your height (cm)", min_value=120, value=None, max_value=220, step=1)
+    weight = st.number_input("Enter your weight (kg)", min_value=30, value=None, max_value=200, step=1)
+else:
+    height_ft = st.number_input("Enter your height (feet)", min_value=4, value=None, max_value=7, step=1)
+    height_in = st.number_input("Enter your height (inches)", min_value=0, value=None, max_value=11, step=1)
+    weight_lbs = st.number_input("Enter your weight (lbs)", min_value=66, value=None, max_value=440, step=1)
+    
+    if height_ft is not None and height_in is not None:
+        height = (height_ft * 30.48) + (height_in * 2.54)
+    elif height_ft is not None and height_in is None:
+        height = height_ft * 30.48
+    if weight_lbs is not None:
+        weight = weight_lbs * 0.453592
+
 disease = st.selectbox("Do you have any of the following cardiovascular diseases?", disease_options, index=0)
 
 # Transform sex to 0 and 1
