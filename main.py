@@ -15,7 +15,7 @@ from plot_config import cfgs
 
 DEBUG = False
 TITLE = "The Stanford My Heart Counts (MHC) Cardiovascular Health Study: Six-Minute Walk Test (6MWT) Data Visualization"
-K = 200
+k = 200
 
 _summary_dao = LocalSixMwtSummary(path="18k_6mwts_anonymized.parquet")
 
@@ -55,7 +55,7 @@ df = get_summary_data()
 
 st.write(html_code, unsafe_allow_html=True)
 st.header('Where do you stand (or walk)?', divider='rainbow')
-st.write(f'Give it a try, we compare your data against the {K} most similar walks!')
+st.write(f'Give it a try, we compare your data against the {k} most similar walks!')
 
 
 disease_options = ["None"] + list(cardio_disease_options) + list(vascular_disease_options)
@@ -116,14 +116,17 @@ if disease != "None":
 
 
 if selected_columns:
-    if len(df) < K:
+    filtered_df = df[selected_columns].dropna()
+
+    if len(filtered_df) < k:
         st.warning(f"Only {len(df)} walks found for the selected demographics, results may be biased.")
-        K = len(df)
-    filtered_df = df[selected_columns]
+        k = len(filtered_df) - 1
+    st.write(k)
+
     scaler = RobustScaler()
-    filtered_df_scaled = scaler.fit_transform(filtered_df.dropna())
+    filtered_df_scaled = scaler.fit_transform(filtered_df)
     query_point_scaled = scaler.transform([selected_values])
-    nbrs = NearestNeighbors(n_neighbors=K).fit(filtered_df_scaled)
+    nbrs = NearestNeighbors(n_neighbors=k).fit(filtered_df_scaled)
     distances, indices = nbrs.kneighbors(query_point_scaled)
     original_indices = filtered_df.dropna().index[indices[0]]
     nearest_neighbors_df = df.loc[original_indices]
@@ -139,7 +142,8 @@ ranks = rankdata(walk_distances, method='average')
 ecdf = ranks / len(walk_distances)
 
 # Find the user's quantile position
-user_rank = rankdata(np.append(walk_distances, user_walk_distance), method='average')[-1]
+user_rank = rankdata(np.append(walk_distances, 
+user_walk_distance), method='average')[-1]
 user_quantile = user_rank / len(walk_distances)
 
 for cfg in cfgs:
@@ -203,5 +207,5 @@ fig.update_layout(
 
 st.plotly_chart(fig)
 
-st.warning(f'Treat this estimations with caution. We look for the {K} walks that most closely match your demographics '
+st.warning(f'Treat this estimations with caution. We look for the {k} walks that most closely match your demographics '
            'data and this may result in biased estimates if you differ too much from our current users.', icon="⚠️")
