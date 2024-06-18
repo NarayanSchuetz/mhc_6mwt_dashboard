@@ -119,9 +119,8 @@ if selected_columns:
     filtered_df = df[selected_columns].dropna()
 
     if len(filtered_df) < k:
-        st.warning(f"Only {len(df)} walks found for the selected demographics, results may be biased.")
+        st.warning(f"Only {len(filtered_df)} walks found for the selected demographics, results may be biased.")
         k = len(filtered_df) - 1
-    st.write(k)
 
     scaler = RobustScaler()
     filtered_df_scaled = scaler.fit_transform(filtered_df)
