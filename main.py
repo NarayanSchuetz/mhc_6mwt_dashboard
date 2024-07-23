@@ -17,7 +17,7 @@ DEBUG = False
 TITLE = "The Stanford My Heart Counts (MHC) Cardiovascular Health Study: Six-Minute Walk Test (6MWT) Data Visualization"
 k = 200
 
-_summary_dao = LocalSixMwtSummary(path="18k_6mwts_anonymized.parquet")
+_summary_dao = LocalSixMwtSummary(path="30k_6mwts_anonymized_filtered_and_winsored.parquet")
 
 
 @st.cache_resource
@@ -33,7 +33,7 @@ col1, col2, col3 = st.columns([1, 6, 1])
 with col2:
     st.markdown(f"{title_styles}<div class='title'>{TITLE}</div>", unsafe_allow_html=True)
     st.markdown('<h4 style="text-align:center;"><i>The Largest Crowd-Sourced Digital Walk Repository with over 30,000 '
-                'Smartphone-Recorded 6-Minute Walk Tests from more than 5,000 Users.</i></h4>',
+                'Smartphone-Recorded 6-Minute Walk Tests from more than 8,000 Users.</i></h4>',
                 unsafe_allow_html=True)
 
 
