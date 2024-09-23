@@ -41,8 +41,8 @@ with col2:
 html_code = f"""
 {button_styles}
 <div style="display: flex; justify-content: center; margin-top:50px; margin-bottom:75px;">
-    <a href="https://www.google.com" download="data.csv">
-        <button class="button">Download Dataset</button>
+    <a href="https://www.synapse.org/Synapse:syn61843472/wiki/629116">
+        <button class="button">To the Dataset</button>
     </a>
     <a href="https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://apps.apple.com/us/app/myheart-counts/id972189947&ved=2ahUKEwiH-Km9ouKGAxV7KEQIHTIrBz4QFnoECBIQAQ&usg=AOvVaw2KKeG75JTdl-8FA17ZPzOv">
         <button class="button">To the iOS App</button>
