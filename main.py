@@ -92,6 +92,20 @@ elif sex == "Female":
 else:
     sex_code = None
 
+# Calculate expected walking distance
+expected_distance = None
+if sex_code is not None and age is not None and height is not None and weight is not None:
+    bmi = weight / ((height / 100) ** 2)
+    age_squared = age ** 2
+    expected_distance = (
+        sex_code * 57.3225873156172 +
+        age * 6.50473291068942 +
+        age_squared * -0.0782335499384106 +
+        height * 3.91707348474492 +
+        bmi * -1.97874151686983 +
+        -275.910433171369
+    )
+    st.markdown(f"### Your expected 6-minute walk distance based on your demographics: <span style='color: blue;'>{expected_distance:.2f} meters</span>", unsafe_allow_html=True)
 
 values = [sex_code, age, height, weight]
 selected_values = []
@@ -150,6 +164,8 @@ for cfg in cfgs:
         fig = go.Figure()
         fig.add_trace(go.Histogram(x=walk_distances, name='Walk Distances'))
         fig.add_vline(x=user_walk_distance, line=dict(color="Red", width=3), name='Your Position')
+        if expected_distance is not None:
+            fig.add_vline(x=expected_distance, line=dict(color="Blue", width=2, dash='dash'), name='Expected Distance')
         fig.update_layout(
             title='Distribution and Your Position in 6-Minute Walk Test Distance',
             xaxis_title=cfg["title"],
@@ -161,6 +177,8 @@ for cfg in cfgs:
 
         st.plotly_chart(fig)
         st.write(f"Your 6-Minute Walk Distance: {user_walk_distance} meters puts you at the {user_quantile:.2%} quantile.")
+        if expected_distance is not None:
+            st.markdown(f"Your expected distance: <span style='color: blue;'>{expected_distance:.2f} meters</span>", unsafe_allow_html=True)
     else:
         fig = go.Figure()
         fig.add_trace(go.Histogram(x=nearest_neighbors_df[cfg["var"]].dropna()))
