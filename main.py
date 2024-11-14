@@ -61,7 +61,7 @@ st.write(f'Give it a try, we compare your data against the {k} most similar walk
 disease_options = ["None"] + list(cardio_disease_options) + list(vascular_disease_options)
 
 # User input fields
-sixmwd = st.number_input("Enter your 6-minute walk distance (meters)", min_value=300, value=600, max_value=1500, step=1)
+sixmwd = st.number_input("Enter your 6-minute walk distance (meters)", min_value=300, value=None, max_value=1500, step=1)
 sex = st.selectbox("Select your sex", ["Undefined", "Male", "Female"])
 age = st.number_input("Enter your age (years)", min_value=18, value=None, step=1, max_value=90)
 
@@ -150,20 +150,19 @@ else:
 user_walk_distance = sixmwd
 walk_distances = nearest_neighbors_df["6mwt_total_distance"].dropna()
 
-# Calculate ranks
-ranks = rankdata(walk_distances, method='average')
-ecdf = ranks / len(walk_distances)
-
-# Find the user's quantile position
-user_rank = rankdata(np.append(walk_distances, 
-user_walk_distance), method='average')[-1]
-user_quantile = user_rank / len(walk_distances)
+# Calculate ranks and user's quantile position only if user_walk_distance is provided
+if user_walk_distance is not None:
+    ranks = rankdata(walk_distances, method='average')
+    ecdf = ranks / len(walk_distances)
+    user_rank = rankdata(np.append(walk_distances, user_walk_distance), method='average')[-1]
+    user_quantile = user_rank / len(walk_distances)
 
 for cfg in cfgs:
     if cfg["var"] == "6mwt_total_distance":  # Adjust for walk distance
         fig = go.Figure()
         fig.add_trace(go.Histogram(x=walk_distances, name='Walk Distances'))
-        fig.add_vline(x=user_walk_distance, line=dict(color="Red", width=3), name='Your Position')
+        if user_walk_distance is not None:
+            fig.add_vline(x=user_walk_distance, line=dict(color="Red", width=3), name='Your Position')
         if expected_distance is not None:
             fig.add_vline(x=expected_distance, line=dict(color="Blue", width=2, dash='dash'), name='Expected Distance')
         fig.update_layout(
@@ -176,7 +175,8 @@ for cfg in cfgs:
         )
 
         st.plotly_chart(fig)
-        st.write(f"Your 6-Minute Walk Distance: {user_walk_distance} meters puts you at the {user_quantile:.2%} quantile.")
+        if user_walk_distance is not None:
+            st.write(f"Your 6-Minute Walk Distance: {user_walk_distance} meters puts you at the {user_quantile:.2%} quantile.")
         if expected_distance is not None:
             st.markdown(f"Your expected distance: <span style='color: blue;'>{expected_distance:.2f} meters</span>", unsafe_allow_html=True)
     else:
